@@ -10,9 +10,15 @@ import 'components/description.dart';
 import 'components/product_title_with_image.dart';
 
 class DetailsScreen extends StatelessWidget {
-  const DetailsScreen({super.key, required this.product});
+  const DetailsScreen({Key? key, required this.product}) : super(key: key);
 
   final Product product;
+
+  // Function to add the current product to the cart
+  void addToCart() {
+    // Implement your logic to add the product to the cart
+    print("Added to Cart: ${product.title}");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +47,9 @@ class DetailsScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => CartPage(
-                          cartItems: [],
-                        )), // Replace with your CartPage widget
+                  builder: (context) => CartPage(
+                      cartItems: []), // Replace with your CartPage widget
+                ),
               );
             },
           ),
@@ -78,7 +84,11 @@ class DetailsScreen extends StatelessWidget {
                         Description(product: product),
                         const SizedBox(height: kDefaultPaddin / 2),
                         const SizedBox(height: kDefaultPaddin / 2),
-                        AddToCart(product: product)
+                        AddToCart(
+                          product: product,
+                          addToCartCallback:
+                              addToCart, // Pass the addToCart function
+                        ),
                       ],
                     ),
                   ),

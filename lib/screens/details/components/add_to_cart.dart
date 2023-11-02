@@ -2,32 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shop_app/models/Product.dart';
 import 'package:shop_app/screens/details/components/checkout_page.dart';
-
-import '../../../constants.dart';
+import 'package:shop_app/constants.dart';
 
 class AddToCart extends StatelessWidget {
-  const AddToCart({Key? key, required this.product}) : super(key: key);
+  const AddToCart(
+      {Key? key, required this.product, required this.addToCartCallback})
+      : super(key: key);
 
   final Product product;
-
-  // Function to handle the "Add to Cart" button click
-  void addToCart() {
-    // You can implement your logic here to add the product to the cart.
-    // For example, you can use a state management solution like Provider or Riverpod.
-    print("Added to Cart: ${product.title}");
-  }
-
-  // Function to handle the "Buy Now" button click and navigate to the checkout page
-  void buyNow(BuildContext context) {
-    // You can implement your logic here to initiate the purchase process.
-    print("Buy Now: ${product.title}");
-
-    // Use Navigator to navigate to the checkout page
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CheckoutPage(product: product)),
-    );
-  }
+  final VoidCallback addToCartCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +34,17 @@ class AddToCart extends StatelessWidget {
                 colorFilter: ColorFilter.mode(product.color, BlendMode.srcIn),
               ),
               onPressed:
-                  addToCart, // Call the addToCart function on button click
+                  addToCartCallback, // Call the provided addToCartCallback function
             ),
           ),
           Expanded(
             child: ElevatedButton(
               onPressed: () {
-                buyNow(context); // Call the buyNow function with the context
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => CheckoutPage(product: product)),
+                );
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 48),

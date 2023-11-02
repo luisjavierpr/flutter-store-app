@@ -1,40 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shop_app/constants.dart';
+import 'package:shop_app/screens/details/components/cart_page.dart';
 
 import '../../models/Product.dart';
 import '../details/details_screen.dart';
 import 'components/categorries.dart';
 import 'components/item_card.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String selectedCategory = "All Items";
+
   @override
   Widget build(BuildContext context) {
+    List<Product> filteredProducts = selectedCategory == "All Items"
+        ? products
+        : products
+            .where((product) => product.category == selectedCategory)
+            .toList();
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black, // Set the background color to black
+        backgroundColor: Colors.black,
         elevation: 0,
         leading: IconButton(
           icon: SvgPicture.asset(
             "assets/icons/back.svg",
-            color: Colors.white, // Set the icon color to white
+            color: Colors.white,
           ),
           onPressed: () {},
         ),
         actions: <Widget>[
           IconButton(
             icon: SvgPicture.asset(
-              "assets/icons/search.svg",
-              color: Colors.white, // Set the icon color to white
-            ),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: SvgPicture.asset(
               "assets/icons/cart.svg",
-              color: Colors.white, // Set the icon color to white
+              color: Colors.white,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CartPage(cartItems: []),
+                ),
+              );
+            },
           ),
           SizedBox(width: kDefaultPaddin / 2)
         ],
@@ -53,12 +67,18 @@ class HomeScreen extends StatelessWidget {
                   .copyWith(fontWeight: FontWeight.bold),
             ),
           ),
-          Categories(),
+          Categories(
+            onCategorySelected: (category) {
+              setState(() {
+                selectedCategory = category;
+              });
+            },
+          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: kDefaultPaddin),
               child: GridView.builder(
-                itemCount: products.length,
+                itemCount: filteredProducts.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: kDefaultPaddin,
@@ -66,15 +86,16 @@ class HomeScreen extends StatelessWidget {
                   childAspectRatio: 0.75,
                 ),
                 itemBuilder: (context, index) => ItemCard(
-                  product: products[index],
+                  product: filteredProducts[index],
                   press: () => Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => DetailsScreen(
-                        product: products[index],
+                        product: filteredProducts[index],
                       ),
                     ),
                   ),
+                  filter: selectedCategory,
                 ),
               ),
             ),
